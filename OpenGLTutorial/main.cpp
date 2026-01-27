@@ -97,6 +97,18 @@ int main() {
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
+
+	// Linking vertex attr
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VAO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
 	// Shader Program
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
@@ -104,6 +116,8 @@ int main() {
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 
@@ -114,7 +128,8 @@ int main() {
 
 
 
-
+	
+	
 
 
 	// Render loop
@@ -126,6 +141,11 @@ int main() {
 		// Rendering commands here 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		// draw
+		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// event checking / swap buffers
 		glfwSwapBuffers(window);
